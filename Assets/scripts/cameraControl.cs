@@ -8,6 +8,14 @@ public class cameraControl : MonoBehaviour {
     private bool _signalled = false;
     private bool _locked = false;
 
+    private int audio_stage = 0;
+    private AudioSource audio1;
+    private AudioSource audio2;
+
+    public void SetAudioStage(int x)
+    {
+        audio_stage = x;
+    }
     public void LockCamera()
     {
         _locked = true;
@@ -17,7 +25,31 @@ public class cameraControl : MonoBehaviour {
         _locked = false;
     }
 
+    void Start()
+    {
+        audio1 = GameObject.FindGameObjectWithTag("Audio1").GetComponent<AudioSource>();
+        audio2 = GameObject.FindGameObjectWithTag("Audio2").GetComponent<AudioSource>();
+        audio1.Play();
+    }
+
 	void Update () {
+        if (audio_stage == 0)
+        {
+            audio1.volume = Mathf.Min(1.0f, audio1.volume + Time.deltaTime / 20.0f);
+            audio2.volume = Mathf.Max(0.0f, audio2.volume - Time.deltaTime / 1.0f);
+        }
+        else if (audio_stage == 1)
+        {
+            audio1.volume = Mathf.Max(0.0f, audio1.volume - Time.deltaTime / 1.0f);
+            audio2.volume = Mathf.Min(1.0f, audio2.volume + Time.deltaTime / 1.0f);
+        }
+        else
+        {
+            audio1.volume = Mathf.Max(0.0f, audio1.volume - Time.deltaTime / 2.0f);
+            audio2.volume = Mathf.Max(0.0f, audio2.volume - Time.deltaTime / 2.0f);
+        }
+
+
         if (transform.position.z < nextSceneThreshold )
         {
             if (Input.GetKey(KeyCode.UpArrow) && !_locked)
@@ -29,8 +61,11 @@ public class cameraControl : MonoBehaviour {
         }
         else if (!_signalled)
         {
+            audio_stage = 1;
+
             blackScreen bs = FindObjectOfType<blackScreen>();
             bs.SetFade(2);
+            audio2.Play();
 
             branchControl bc = FindObjectOfType<branchControl>();
             
