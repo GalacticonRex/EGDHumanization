@@ -8,26 +8,35 @@ public class blackScreen : MonoBehaviour {
 
     private UnityEngine.UI.MaskableGraphic _image;
     private List<UnityEngine.UI.MaskableGraphic> _children;
-    private bool _triggered;
+    private int _triggered;
     private bool _children_showing;
     private float _alpha;
     private float _alpha_showing;
+    private bool _running;
 
-	public void FadeIn()
+    public void SetFade( int x )
     {
-        _triggered = true;
+        _triggered = System.Math.Max(System.Math.Min(x, 2), 0);
     }
-    public void FadeOut()
+    public void SetFadeToZero()
     {
-        _triggered = false;
+        _triggered = 0;
+    }
+    public void SetFadeToOne()
+    {
+        _triggered = 1;
+    }
+    public void SetFadeToTwo()
+    {
+        _triggered = 2;
     }
     void Start()
     {
         _image = GetComponent<UnityEngine.UI.MaskableGraphic>();
         _image.color = new Color(0, 0, 0, 0);
         _children_showing = false;
-        _triggered = false;
-        _alpha = 0.0f;
+        _triggered = 0;
+        _alpha = 1.5f;
         _alpha_showing = 0.0f;
         _children = new List<UnityEngine.UI.MaskableGraphic>();
         Debug.Log(transform.childCount);
@@ -44,13 +53,24 @@ public class blackScreen : MonoBehaviour {
     }
 	void Update()
     {
-        if (_triggered)
+        if (_triggered == 2)
         {
             if (_alpha == 1.0f)
             {
-                foreach ( UnityEngine.UI.MaskableGraphic img in _children )
+                foreach (UnityEngine.UI.MaskableGraphic img in _children)
                     img.color = new Color(1, 1, 1, _alpha_showing);
                 _alpha_showing = Mathf.Min(_alpha_showing + Time.deltaTime / fadeTime, 1.0f);
+            }
+            else
+                _alpha = Mathf.Min(_alpha + Time.deltaTime / fadeTime, 1.0f);
+        }
+        else if (_triggered == 1)
+        {
+            if (_alpha_showing > 0.0f)
+            {
+                foreach (UnityEngine.UI.MaskableGraphic img in _children)
+                    img.color = new Color(1, 1, 1, _alpha_showing);
+                _alpha_showing = Mathf.Max(_alpha_showing - Time.deltaTime / fadeTime, 0.0f);
             }
             else
                 _alpha = Mathf.Min(_alpha + Time.deltaTime / fadeTime, 1.0f);
@@ -59,7 +79,7 @@ public class blackScreen : MonoBehaviour {
         {
             if (_alpha_showing > 0.0f)
             {
-                foreach (UnityEngine.UI.Image img in _children)
+                foreach (UnityEngine.UI.MaskableGraphic img in _children)
                     img.color = new Color(1, 1, 1, _alpha_showing);
                 _alpha_showing = Mathf.Max(_alpha_showing - Time.deltaTime / fadeTime, 0.0f);
             }

@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class choiceTrigger : MonoBehaviour {
+public class scriptTrigger : MonoBehaviour {
 
-    public choiceObject ChoiceObject;
+    public scriptObject ScriptObject;
     private bool _triggered;
 
     void OnTriggerEnter(Collider collid)
     {
+        Debug.Log("Triggered Script");
         if (!_triggered)
         {
-            ChoiceObject.StartChoice();
+            ScriptObject.StartText();
             _triggered = true;
         }
     }

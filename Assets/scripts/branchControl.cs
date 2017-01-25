@@ -8,14 +8,31 @@ public class branchControl : MonoBehaviour {
     private Dictionary<string, bool> _choices;
     private choiceObject _current_choice;
 
+    public bool Get(string str)
+    {
+        return _choices[str];
+    }
+
     public void SelectFirstChoice()
     {
-        _choices[_current_choice.name] = true;
+        if (_current_choice != null)
+        {
+            _choices[_current_choice.name] = true;
+            _current_choice.DoneChoice();
+            if (_current_choice.AfterChoice1 != null)
+                _current_choice.AfterChoice1.StartText();
+        }
         HideChoices();
     }
     public void SelectSecondChoice()
     {
-        _choices[_current_choice.name] = false;
+        if (_current_choice != null)
+        {
+            _choices[_current_choice.name] = false;
+            _current_choice.DoneChoice();
+            if (_current_choice.AfterChoice2 != null)
+                _current_choice.AfterChoice2.StartText();
+        }
         HideChoices();
     }
 
